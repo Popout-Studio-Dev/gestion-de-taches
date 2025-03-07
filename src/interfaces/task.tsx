@@ -17,20 +17,3 @@ export interface Task {
     startedAt?: string;
     completedAt?: string;
 }
-
-
-export interface TaskMetadata {
-    totalTasks: number;
-    waitingTasks: number;
-    ongoingTasks: number;
-    completedTasks: number;
-    overdueTasks: number;
-}
-
-
-export interface TaskUpdate {
-    title?: string;
-    description?: string | null;
-    status?: TaskStatus;
-    dueDate?: string | null;
-}
