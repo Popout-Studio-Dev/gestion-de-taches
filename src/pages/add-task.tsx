@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useTasks } from "@/context/TaskContext";
 import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
-import { Task, TaskStatus } from "../interfaces/task"; // Ajustez le chemin
+import { Task, TaskStatus } from "../interfaces/task"; 
 
 export default function AddTask() {
   const { addTask } = useTasks();
@@ -41,7 +41,7 @@ export default function AddTask() {
     // Création des timestamps
     const now = new Date().toISOString();
     
-    // Création de la tâche complète avec les champs obligatoires
+    
     const newTask: Task = {
       id: uuidv4(),
       title: task.title || "",

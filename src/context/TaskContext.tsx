@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, ReactNode } from "react";
-import { Task } from "../interfaces/task"; // Ajustez le chemin
+import { Task } from "../interfaces/task";
 
 interface TaskContextType {
   tasks: Task[];
@@ -36,5 +36,4 @@ export function useTasks() {
   return context;
 }
 
-// Réexporter Task pour faciliter l'import
 export type { Task };
