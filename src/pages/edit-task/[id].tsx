@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Task, useTasks } from "@/context/TaskContext";
+import { useTasks } from "@/context/TaskContext";
 import { useRouter, useParams } from "next/navigation";
+import { Task, TaskStatus } from "../../interfaces/task"; // Ajustez le chemin
 
 export default function EditTask() {
   const { tasks, updateTask } = useTasks();
@@ -28,21 +29,27 @@ export default function EditTask() {
     const { name, value, type } = e.target;
 
     setTask((prev) => {
-      // Si `prev` est nul ou undefined, on crée un objet `task` avec des valeurs par défaut
-      const updatedTask: Task = prev ? { ...prev } : {
-        id: '',
-        title: '',
-        description: '',
-        beginDate: '',
-        completed: false,
-        status: 'En cours',
-      };
+      if (!prev) return null;
 
-      // Mettre à jour la propriété correspondante de la tâche
-      return {
-        ...updatedTask,
-        [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
-      };
+      if (type === "checkbox" && name === "completed") {
+        // Si la case "completed" est cochée, mettre à jour le statut
+        const checked = (e.target as HTMLInputElement).checked;
+        const now = new Date().toISOString();
+        
+        return {
+          ...prev,
+          status: checked ? TaskStatus.COMPLETED : TaskStatus.ONGOING,
+          updatedAt: now,
+          // Mettre à jour les dates de statut
+          ...(checked ? { completedAt: now } : { startedAt: prev.startedAt || now }),
+        };
+      } else {
+        return {
+          ...prev,
+          [name]: value,
+          updatedAt: new Date().toISOString(),
+        };
+      }
     });
   };
 
@@ -51,7 +58,21 @@ export default function EditTask() {
     e.preventDefault();
 
     if (task) {
-      updateTask(task); // Mettre à jour la tâche dans le contexte
+      // Si le statut change, mettre à jour les timestamps
+      const now = new Date().toISOString();
+      let updatedTask = {
+        ...task,
+        updatedAt: now,
+      };
+      
+      // Mettre à jour les dates de début/fin en fonction du statut
+      if (task.status === TaskStatus.ONGOING && !task.startedAt) {
+        updatedTask = { ...updatedTask, startedAt: now };
+      } else if (task.status === TaskStatus.COMPLETED && !task.completedAt) {
+        updatedTask = { ...updatedTask, completedAt: now };
+      }
+      
+      updateTask(updatedTask);
     } else {
       console.error("Task is undefined");
     }
@@ -81,8 +102,8 @@ export default function EditTask() {
         />
         <input
           type="date"
-          name="beginDate"
-          value={task.beginDate || ""}
+          name="dueDate"
+          value={task.dueDate || ""}
           onChange={handleChange}
           className="form-control mb-3"
         />
@@ -92,15 +113,15 @@ export default function EditTask() {
           onChange={handleChange}
           className="form-control mb-3"
         >
-          <option value="En cours">En cours</option>
-          <option value="Terminé">Terminé</option>
-          <option value="En attente">En attente</option>
+          <option value={TaskStatus.WAITING}>En attente</option>
+          <option value={TaskStatus.ONGOING}>En cours</option>
+          <option value={TaskStatus.COMPLETED}>Terminé</option>
         </select>
         <div className="form-check mb-3">
           <input
             type="checkbox"
             name="completed"
-            checked={task.completed}
+            checked={task.status === TaskStatus.COMPLETED}
             onChange={handleChange}
             className="form-check-input"
           />
