@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useTasks } from "@/context/TaskContext";
 import { useRouter, useParams } from "next/navigation";
-import { Task, TaskStatus } from "../../interfaces/task"; // Ajustez le chemin
+import { Task, TaskStatus } from "../../interfaces/task"; 
 
 export default function EditTask() {
   const { tasks, updateTask } = useTasks();
@@ -15,12 +15,12 @@ export default function EditTask() {
 
   const [task, setTask] = useState<Task | null>(null);
 
-  // Mettre à jour l'état `task` lorsqu'une tâche existante est trouvée
+  
   useEffect(() => {
     if (existingTask) {
       setTask(existingTask);
     } else {
-      router.push("/"); // Rediriger si la tâche n'existe pas
+      router.push("/"); 
     }
   }, [existingTask, router]);
 
@@ -65,7 +65,7 @@ export default function EditTask() {
         updatedAt: now,
       };
       
-      // Mettre à jour les dates de début/fin en fonction du statut
+      // Mettre à jour les dates de début/fin
       if (task.status === TaskStatus.ONGOING && !task.startedAt) {
         updatedTask = { ...updatedTask, startedAt: now };
       } else if (task.status === TaskStatus.COMPLETED && !task.completedAt) {
@@ -77,7 +77,7 @@ export default function EditTask() {
       console.error("Task is undefined");
     }
 
-    router.push("/"); // Rediriger vers la page d'accueil
+    router.push("/"); 
   };
 
   // Si `task` est toujours null ou undefined, on ne rend rien
