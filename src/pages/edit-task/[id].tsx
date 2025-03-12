@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { useTasks } from "@/context/TaskContext";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter } from "next/router";
 import { Task, TaskStatus } from "../../interfaces/task"; 
+
+
 
 export default function EditTask() {
   const { tasks, updateTask } = useTasks();
   const router = useRouter();
-  const { id } = useParams();
+  const { id } = router.query;
 
   // Trouver la tâche existante dans la liste des tâches
   const existingTask = tasks.find((t) => t.id === id);
