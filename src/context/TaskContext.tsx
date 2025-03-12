@@ -1,15 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, ReactNode } from "react";
-
-export interface Task {
-  id: string;
-  title: string;
-  description?: string;
-  beginDate?: string;
-  completed: boolean;
-  status: string;
-}
+import { Task } from "../interfaces/task";
 
 interface TaskContextType {
   tasks: Task[];
@@ -43,3 +35,5 @@ export function useTasks() {
   }
   return context;
 }
+
+export type { Task };
