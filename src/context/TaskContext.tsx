@@ -14,6 +14,15 @@ interface TaskContextType {
 
 const TaskContext = createContext<TaskContextType | undefined>(undefined);
 
+/**
+ * Provides a React context for managing tasks.
+ *
+ * This provider component maintains an internal list of tasks and exposes functions to add, update, delete,
+ * and retrieve tasks (by status or all) via a React context. It should wrap any components that need to access
+ * task management functionality.
+ *
+ * @param children - The React elements that will have access to the task context.
+ */
 export function TaskProvider({ children }: { children: ReactNode }) {
   const [tasks, setTasks] = useState<Task[]>([]);
 
@@ -54,6 +63,16 @@ export function TaskProvider({ children }: { children: ReactNode }) {
   );
 }
 
+/**
+ * Retrieves the task context.
+ *
+ * This hook provides access to the current task context, including the task list and
+ * functions for adding, updating, deleting, and retrieving tasks. It must be used within
+ * a TaskProvider to ensure the context is available.
+ *
+ * @throws {Error} If used outside of a TaskProvider.
+ * @returns The task context.
+ */
 export function useTasks() {
   const context = useContext(TaskContext);
   if (!context) {

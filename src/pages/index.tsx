@@ -5,6 +5,12 @@ import { useRouter } from "next/navigation";
 import { TaskStatus, Task } from "../interfaces/task"; 
 import TaskList from "../pages/list_task";
 
+/**
+ * Renders the main task management interface.
+ *
+ * This component displays a dashboard with task statistics—including the total number of tasks, counts of waiting, ongoing, and completed tasks, and the computed completion rate.
+ * It also renders a list of tasks that allows for editing via navigation to a task-specific edit page and deletion with user confirmation.
+ */
 export default function Home() {
   const { tasks, deleteTask } = useTasks();
   const router = useRouter();

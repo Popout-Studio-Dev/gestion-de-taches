@@ -12,6 +12,13 @@ export const getServerSideProps = async () => {
   };
 };
 
+/**
+ * Renders a form interface for editing a task.
+ *
+ * The component retrieves a task by its ID from the task context and displays an editable form to update task details, including the title, description, due date, and status. It also allows for task deletion with a confirmation prompt. A loading spinner is shown while the task data is being fetched, and a warning message is displayed if the task is not found.
+ *
+ * @param params - An object containing route parameters, including the task ID.
+ */
 export default function EditTask({ params }: { params: { id: string } }) {
   const { tasks, updateTask, deleteTask } = useTasks();
   const router = useRouter();

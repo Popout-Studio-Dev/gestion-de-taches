@@ -7,6 +7,11 @@ import { v4 as uuidv4 } from "uuid";
 import { Task, TaskStatus } from "../interfaces/task"; 
 import Link from "next/link";
 
+/**
+ * Renders a form for creating a new task.
+ *
+ * This component provides a controlled interface for entering task details including title, description, due date, and status. When the form is submitted, it generates a unique task ID and timestamps (conditionally adding start or completion times based on the selected status), adds the new task via the task context, and navigates back to the home page.
+ */
 export default function AddTask() {
   const { addTask } = useTasks();
   const router = useRouter();
