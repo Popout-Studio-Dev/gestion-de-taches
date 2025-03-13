@@ -2,59 +2,37 @@
 
 import React from 'react';
 import { Task, TaskStatus } from '../interfaces/task'; 
-
-// Données factices
-export const fakeTasksData: Task[] = [
-  {
-    id: '1',
-    title: 'Implémenter l\'authentification',
-    description: 'Ajouter un système d\'authentification JWT pour sécuriser l\'API',
-    status: TaskStatus.ONGOING,
-    dueDate: '2025-03-15',
-    createdAt: '2025-03-01T10:00:00Z',
-    updatedAt: '2025-03-02T14:30:00Z',
-    startedAt: '2025-03-02T14:30:00Z'
-  },
-  {
-    id: '2',
-    title: 'Créer le dashboard',
-    description: 'Concevoir et implémenter le tableau de bord principal avec des statistiques',
-    status: TaskStatus.WAITING,
-    dueDate: '2025-03-20',
-    createdAt: '2025-03-01T11:15:00Z',
-    updatedAt: '2025-03-01T11:15:00Z'
-  },
-  {
-    id: '3',
-    title: 'Tester l\'API RESTful',
-    description: 'Écrire des tests unitaires et d\'intégration pour l\'API',
-    status: TaskStatus.COMPLETED,
-    dueDate: '2025-03-05',
-    createdAt: '2025-02-28T09:00:00Z',
-    updatedAt: '2025-03-05T16:45:00Z',
-    startedAt: '2025-02-28T10:30:00Z',
-    completedAt: '2025-03-05T16:45:00Z'
-  }
-];
+import Link from 'next/link';
 
 interface TaskListProps {
   tasks?: Task[];
   onTaskClick?: (task: Task) => void;
   showAddButton?: boolean;
   onAddClick?: () => void;
+  onDeleteTask?: (id: string) => void;
 }
 
 const TaskList: React.FC<TaskListProps> = ({
-  tasks = fakeTasksData,
+  tasks = [],
   onTaskClick,
   showAddButton = true,
-  onAddClick
+  onDeleteTask
 }) => {
   // Fonction pour formater la date
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'Non définie';
     const date = new Date(dateString);
     return date.toLocaleDateString('fr-FR');
+  };
+
+  // Fonction pour déterminer si une date est proche
+  const isDueSoon = (dueDate?: string) => {
+    if (!dueDate) return false;
+    const today = new Date();
+    const due = new Date(dueDate);
+    const diffTime = due.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays <= 3 && diffDays >= 0;
   };
 
   // Style badge pour chaque statut
@@ -71,6 +49,19 @@ const TaskList: React.FC<TaskListProps> = ({
     }
   };
 
+  // Classe pour le card border
+  const getCardClass = (status: TaskStatus) => {
+    switch (status) {
+      case TaskStatus.WAITING:
+        return 'waiting';
+      case TaskStatus.ONGOING:
+        return 'ongoing';
+      case TaskStatus.COMPLETED:
+        return 'completed';
+      default:
+        return '';
+    }
+  };
 
   const getStatusText = (status: TaskStatus) => {
     switch (status) {
@@ -86,64 +77,96 @@ const TaskList: React.FC<TaskListProps> = ({
   };
 
   return (
-    <div className="container mt-4">
+    <div className="container-fluid mt-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1>Liste des tâches</h1>
+        <h2 className="page-header">Liste des tâches</h2>
         {showAddButton && (
-          <button 
-            className="btn btn-primary" 
-            onClick={onAddClick}
-          >
-            Ajouter une tâche
-          </button>
+          <Link href="/add-task" className="btn btn-primary rounded-pill px-4 py-2 d-flex align-items-center">
+            <i className="bi bi-plus-circle me-2"></i>
+            Nouvelle tâche
+          </Link>
         )}
       </div>
 
-      {tasks.length === 0 ? (
-        <div className="alert alert-info">
-          Aucune tâche n&apos;a été trouvée.
-        </div>
-      ) : (
-        <div className="row">
-          {tasks.map((task) => (
-            <div key={task.id} className="col-md-6 col-lg-4 mb-4">
-              <div 
-                className="card h-100 shadow-sm" 
-                onClick={() => onTaskClick && onTaskClick(task)}
-                style={{ cursor: onTaskClick ? 'pointer' : 'default' }}
-              >
-                <div className="card-header d-flex justify-content-between align-items-center">
-                  <h5 className="card-title mb-0">{task.title}</h5>
-                  <span className={`badge ${getStatusBadgeClass(task.status)}`}>
-                    {getStatusText(task.status)}
-                  </span>
-                </div>
-                <div className="card-body">
-                  <p className="card-text">
-                    {task.description || 'Aucune description'}
-                  </p>
-                  <div className="small text-muted mb-2">
-                    <strong>Date d&apos;échéance:</strong> {formatDate(task.dueDate)}
-                  </div>
-                  <div className="small text-muted">
-                    <strong>Créée le:</strong> {formatDate(task.createdAt)}
-                  </div>
-                  {task.status === TaskStatus.ONGOING && task.startedAt && (
-                    <div className="small text-muted">
-                      <strong>Démarrée le:</strong> {formatDate(task.startedAt)}
+      <div className="row">
+        {tasks.length === 0 ? (
+          <div className="col-12">
+            <div className="alert alert-info d-flex align-items-center" role="alert">
+              <i className="bi bi-info-circle-fill me-2"></i>
+              <div>Aucune tâche n&apos;a été trouvée.</div>
+            </div>
+          </div>
+        ) : (
+          <>
+            {tasks.map((task) => (
+              <div key={task.id} className="col-md-6 col-lg-4 mb-4">
+                <div className={`card h-100 shadow-sm task-card ${getCardClass(task.status)}`}>
+                  <div className="card-header d-flex justify-content-between align-items-center bg-transparent border-bottom-0 pt-3 pb-0">
+                    <span className={`status-badge ${getStatusBadgeClass(task.status)}`}>
+                      {getStatusText(task.status)}
+                    </span>
+                    <div className="task-actions">
+                      <button 
+                        className="btn btn-sm btn-outline-warning me-2 task-action-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          void (onTaskClick && onTaskClick(task));
+                        }}
+                      >
+                        <i className="bi bi-pencil-fill"></i>
+                      </button>
+                      <button 
+                        className="btn btn-sm btn-outline-danger task-action-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          void (onDeleteTask && onDeleteTask(task.id));
+                        }}
+                      >
+                        <i className="bi bi-trash-fill"></i>
+                      </button>
                     </div>
-                  )}
-                  {task.status === TaskStatus.COMPLETED && task.completedAt && (
-                    <div className="small text-muted">
-                      <strong>Terminée le:</strong> {formatDate(task.completedAt)}
+                  </div>
+                  <div 
+                    className="card-body" 
+                    onClick={() => onTaskClick && onTaskClick(task)}
+                    style={{ cursor: onTaskClick ? 'pointer' : 'default' }}
+                  >
+                    <h5 className={`card-title mb-3 ${task.status === TaskStatus.COMPLETED ? 'text-decoration-line-through text-muted' : ''}`}>
+                      {task.title}
+                    </h5>
+                    <p className="card-text text-secondary mb-3">
+                      {task.description || 'Aucune description'}
+                    </p>
+                    <div className="mt-3">
+                      <div className={`d-flex align-items-center mb-2 ${isDueSoon(task.dueDate) ? 'due-soon' : ''}`}>
+                        <i className="bi bi-calendar-event me-2"></i>
+                        <span>{task.dueDate ? formatDate(task.dueDate) : 'Pas de date limite'}</span>
+                        {isDueSoon(task.dueDate) && <span className="ms-2 badge bg-danger">Bientôt</span>}
+                      </div>
+                      <div className="d-flex align-items-center small text-muted">
+                        <i className="bi bi-clock-history me-2"></i>
+                        <span>Créée le {formatDate(task.createdAt)}</span>
+                      </div>
+                      {task.status === TaskStatus.ONGOING && task.startedAt && (
+                        <div className="d-flex align-items-center small text-muted mt-1">
+                          <i className="bi bi-play-circle me-2"></i>
+                          <span>Démarrée le {formatDate(task.startedAt)}</span>
+                        </div>
+                      )}
+                      {task.status === TaskStatus.COMPLETED && task.completedAt && (
+                        <div className="d-flex align-items-center small text-muted mt-1">
+                          <i className="bi bi-check-circle me-2"></i>
+                          <span>Terminée le {formatDate(task.completedAt)}</span>
+                        </div>
+                      )}
                     </div>
-                  )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </>
+        )}
+      </div>
     </div>
   );
 };
