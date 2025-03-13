@@ -1,12 +1,28 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --primary-color: #4e73df;
+  --secondary-color: #858796;
+  --accent-color: #f6c23e;
+  --success-color: #1cc88a;
+  --danger-color: #e74a3b;
+  --info-color: #36b9cc;
+  --dark-color: #5a5c69;
+  --light-color: #f8f9fc;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --primary-color: #4e73df;
+    --secondary-color: #858796;
+    --accent-color: #f6c23e;
+    --success-color: #1cc88a;
+    --danger-color: #e74a3b;
+    --info-color: #36b9cc;
+    --dark-color: #5a5c69;
+    --light-color: #f8f9fc;
   }
 }
 
@@ -33,6 +49,100 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+/* Task card style */
+.task-card {
+  transition: all 0.3s ease;
+  border-left: 4px solid transparent;
+}
+
+.task-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+.task-card.waiting {
+  border-left-color: var(--accent-color);
+}
+
+.task-card.ongoing {
+  border-left-color: var(--primary-color);
+}
+
+.task-card.completed {
+  border-left-color: var(--success-color);
+}
+
+/* Task status badge */
+.status-badge {
+  font-weight: 600;
+  padding: 0.35rem 0.65rem;
+  border-radius: 10rem;
+}
+
+/* Buttons style */
+.task-action-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.task-action-btn:hover {
+  transform: scale(1.1);
+}
+
+/* Form style */
+.task-form-container {
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+/* Page header */
+.page-header {
+  position: relative;
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+
+.page-header:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100px;
+  height: 3px;
+  background-color: var(--primary-color);
+}
+
+/* Dashboard stats */
+.task-stats {
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+  transition: all 0.3s ease;
+}
+
+.task-stats:hover {
+  transform: translateY(-5px);
+}
+
+/* Due date highlight */
+.due-soon {
+  color: var(--danger-color);
+  font-weight: 600;
+}
+
+/* Responsive style */
+@media (max-width: 768px) {
+  .task-card {
+    margin-bottom: 1rem;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
