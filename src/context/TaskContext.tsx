@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { Task, TaskStatus } from "../interfaces/task";
 
 interface TaskContextType {
@@ -14,9 +14,33 @@ interface TaskContextType {
 
 const TaskContext = createContext<TaskContextType | undefined>(undefined);
 
+const LOCAL_STORAGE_KEY = "taskManager_tasks";
+
 export function TaskProvider({ children }: { children: ReactNode }) {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [initialized, setInitialized] = useState(false);
 
+  // Load tasks from localStorage on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedTasks = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (storedTasks) {
+        try {
+          setTasks(JSON.parse(storedTasks));
+        } catch (error) {
+          console.error("Error parsing stored tasks:", error);
+        }
+      }
+      setInitialized(true);
+    }
+  }, []);
+
+  // Save tasks to localStorage whenever they change
+  useEffect(() => {
+    if (initialized && typeof window !== 'undefined') {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(tasks));
+    }
+  }, [tasks, initialized]);
 
   const addTask = (task: Task) => {
     setTasks(prevTasks => [...prevTasks, task]);
