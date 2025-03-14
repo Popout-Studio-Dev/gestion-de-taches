@@ -113,8 +113,17 @@ const TaskList: React.FC<TaskListProps> = ({
                           void (onTaskClick && onTaskClick(task));
                         }}
                       >
-                        <i className="bi bi-pencil-fill"></i>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M4 20h16v2H4zM15.586 2a2 2 0 0 1 2.828 0l3 3a2 2 0 0 1 0 2.828l-11 11L4 20l1.172-6.414 11-11zM14 5.414l-9 9L4.586 18l3.586-.414 9-9L14 5.414z"></path>
+                        </svg>
                       </button>
+
                       <button 
                         className="btn btn-sm btn-outline-danger task-action-btn"
                         onClick={(e) => {
@@ -122,8 +131,17 @@ const TaskList: React.FC<TaskListProps> = ({
                           void (onDeleteTask && onDeleteTask(task.id));
                         }}
                       >
-                        <i className="bi bi-trash-fill"></i>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M3 6h18v2H3zm3 3h12l-1 12H7L6 9zm5 2v8h2v-8h-2zm-4 0v8h2v-8H7zm8 0v8h2v-8h-2zM9 4V2h6v2h5v2H4V4h5z"></path>
+                        </svg>
                       </button>
+
                     </div>
                   </div>
                   <div 

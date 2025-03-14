@@ -1,16 +1,43 @@
 "use client";
 
+import { useState } from "react";
 import { useTasks } from "@/context/TaskContext";
 import { useRouter } from "next/navigation";
 import { TaskStatus, Task } from "../interfaces/task"; 
 import TaskList from "../pages/list_task";
+import Modal from "react-modal";
+
+// Configuration de la modale pour être accessible
+Modal.setAppElement("#__next");
 
 export default function Home() {
   const { tasks, deleteTask } = useTasks();
   const router = useRouter();
+  
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
 
+  // Fonction pour afficher la modale de confirmation
+  const openDeleteModal = (id: string) => {
+    setTaskToDelete(id);
+    setModalIsOpen(true);
+  };
 
-  // Fonction pour calculer les statistiques de tâches
+  // Fonction pour confirmer la suppression
+  const confirmDelete = () => {
+    if (taskToDelete) {
+      deleteTask(taskToDelete);
+      setTaskToDelete(null);
+    }
+    setModalIsOpen(false);
+  };
+
+  // Fonction pour annuler la suppression
+  const closeDeleteModal = () => {
+    setTaskToDelete(null);
+    setModalIsOpen(false);
+  };
+
   const calculateTaskStats = () => {
     const waitingTasks = tasks.filter(task => task.status === TaskStatus.WAITING).length;
     const ongoingTasks = tasks.filter(task => task.status === TaskStatus.ONGOING).length;
@@ -30,12 +57,6 @@ export default function Home() {
   
   const handleTaskClick = (task: Task) => {
     router.push(`/edit-task/${task.id}`);
-  };
-
-  const handleDeleteTask = (id: string) => {
-    if (confirm("Êtes-vous sûr de vouloir supprimer cette tâche ?")) {
-      deleteTask(id);
-    }
   };
 
   return (
@@ -77,10 +98,25 @@ export default function Home() {
             tasks={tasks} 
             onTaskClick={handleTaskClick} 
             showAddButton={true} 
-            onDeleteTask={handleDeleteTask}
+            onDeleteTask={openDeleteModal}
           />
         </div>
       </div>
+
+      {/* Modale de confirmation */}
+      <Modal 
+        isOpen={modalIsOpen}
+        onRequestClose={closeDeleteModal}
+        className="modal-content"
+        overlayClassName="modal-overlay"
+      >
+        <h2>Confirmer la suppression</h2>
+        <p>Êtes-vous sûr de vouloir supprimer cette tâche ?</p>
+        <div className="modal-buttons">
+          <button onClick={confirmDelete} className="btn btn-danger">Supprimer</button>
+          <button onClick={closeDeleteModal} className="btn btn-secondary">Annuler</button>
+        </div>
+      </Modal>
     </div>
   );
 }
