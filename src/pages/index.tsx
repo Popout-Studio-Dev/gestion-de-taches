@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { TaskStatus, Task } from "../interfaces/task"; 
 import TaskList from "../pages/list_task";
 import Modal from "react-modal";
+import Image from "next/image";
 
 // Configuration de la modale pour être accessible
 Modal.setAppElement("#__next");
@@ -117,6 +118,67 @@ export default function Home() {
           <button onClick={closeDeleteModal} className="btn btn-secondary">Annuler</button>
         </div>
       </Modal>
+
+
+{/* Cartes LinkedIn */}
+<div className="row mt-4">
+  <div className="col-md-6">
+    <div className="card shadow-sm text-center p-3">
+      <div className="card-body">
+        <Image 
+          src="/images/profile1.jpeg"  
+          alt="Joseph Ewondjo" 
+          width={100} 
+          height={100} 
+          className="rounded-circle mb-3"
+          style={{ objectFit: "cover" }}
+        />
+
+        <h5 className="card-title fw-bold">Joseph Ewondjo</h5>
+        <p className="text-muted">Développeur</p>
+
+        <a 
+          href="https://www.linkedin.com/in/joseph-ewondjo" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="btn btn-outline-primary btn-sm"
+        >
+          <i className="fab fa-linkedin me-2"></i>Voir le profil
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div className="col-md-6">
+    <div className="card shadow-sm text-center p-3">
+      <div className="card-body">
+        <Image 
+          src="/images/profile2.jpeg"  
+          alt="Brayan Armel Kuate Kamga" 
+          width={100} 
+          height={100} 
+          className="rounded-circle mb-3"
+          style={{ objectFit: "cover" }}
+        />
+
+        <h5 className="card-title fw-bold">Brayan Armel Kuate Kamga</h5>
+        <p className="text-muted">Développeur</p>
+
+        <a 
+          href="https://www.linkedin.com/in/brayan-armel-kuate-kamga-244a24184/" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="btn btn-outline-primary btn-sm"
+        >
+          <i className="fab fa-linkedin me-2"></i>Voir le profil
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
     </div>
   );
 }
