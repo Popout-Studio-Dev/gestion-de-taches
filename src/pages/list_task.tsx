@@ -1,8 +1,8 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Task, TaskStatus } from '../interfaces/task'; 
-import Link from 'next/link';
+import QuickTaskModal from '@/components/QuickTaskModal';
 
 interface TaskListProps {
   tasks?: Task[];
@@ -18,6 +18,17 @@ const TaskList: React.FC<TaskListProps> = ({
   showAddButton = true,
   onDeleteTask
 }) => {
+
+  const [quickModalIsOpen, setQuickModalIsOpen] = useState(false);
+
+  const openQuickModal = () => {
+    setQuickModalIsOpen(true);
+  };
+  
+  const closeQuickModal = () => {
+    setQuickModalIsOpen(false);
+  };
+
   // Fonction pour formater la date
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'Non définie';
@@ -81,10 +92,13 @@ const TaskList: React.FC<TaskListProps> = ({
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className="page-header">Liste des tâches</h2>
         {showAddButton && (
-          <Link href="/add-task" className="btn btn-primary rounded-pill px-4 py-2 d-flex align-items-center">
-            <i className="bi bi-plus-circle me-2"></i>
-            Nouvelle tâche
-          </Link>
+          <button 
+            className="btn btn-primary rounded-pill px-4 py-2 d-flex align-items-center"
+            onClick={openQuickModal}
+          >
+          <i className="bi bi-plus-circle me-2"></i>
+          Nouvelle tâche
+        </button>
         )}
       </div>
 
@@ -185,6 +199,8 @@ const TaskList: React.FC<TaskListProps> = ({
           </>
         )}
       </div>
+
+      <QuickTaskModal isOpen={quickModalIsOpen} onClose={closeQuickModal} />
     </div>
   );
 };
