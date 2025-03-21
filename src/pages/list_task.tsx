@@ -1,8 +1,9 @@
 "use client";
 
 import React from 'react';
-import { Task, TaskStatus } from '../interfaces/task'; 
+import { Task, TaskStatus } from '../interfaces/task';
 import Link from 'next/link';
+
 
 interface TaskListProps {
   tasks?: Task[];
@@ -10,13 +11,17 @@ interface TaskListProps {
   showAddButton?: boolean;
   onAddClick?: () => void;
   onDeleteTask?: (id: string) => void;
+  onValidateTask?: (id: string) => void; 
+  onHiddenTask?: (id: string) => void; 
 }
 
 const TaskList: React.FC<TaskListProps> = ({
   tasks = [],
   onTaskClick,
   showAddButton = true,
-  onDeleteTask
+  onDeleteTask,
+  onValidateTask,
+  onHiddenTask, 
 }) => {
   // Fonction pour formater la date
   const formatDate = (dateString?: string) => {
@@ -49,7 +54,7 @@ const TaskList: React.FC<TaskListProps> = ({
     }
   };
 
-  // Classe pour le card border
+ 
   const getCardClass = (status: TaskStatus) => {
     switch (status) {
       case TaskStatus.WAITING:
@@ -76,6 +81,8 @@ const TaskList: React.FC<TaskListProps> = ({
     }
   };
 
+ 
+
   return (
     <div className="container-fluid mt-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -99,14 +106,47 @@ const TaskList: React.FC<TaskListProps> = ({
         ) : (
           <>
             {tasks.map((task) => (
-              <div key={task.id} className="col-md-6 col-lg-4 mb-4">
+              !task.hidden 
+              ? (
+                <div key={task.id} className="col-md-6 col-lg-4 mb-4">
                 <div className={`card h-100 shadow-sm task-card ${getCardClass(task.status)}`}>
                   <div className="card-header d-flex justify-content-between align-items-center bg-transparent border-bottom-0 pt-3 pb-0">
                     <span className={`status-badge ${getStatusBadgeClass(task.status)}`}>
                       {getStatusText(task.status)}
                     </span>
                     <div className="task-actions">
-                      <button 
+                      {/* Bouton de validation */}
+                     
+                      <button
+                        className="btn btn-sm btn-outline-success me-2 task-action-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onHiddenTask?.(task.id)
+                        }}
+                      >
+                        
+                        Cache
+                      </button>
+                      <button
+                        className="btn btn-sm btn-outline-success me-2 bg-blue-500"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onValidateTask?.(task.id)
+                        }}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M20.293 5.293l-11 11-4.293-4.293-1.414 1.414 5.707 5.707 12.707-12.707-1.414-1.414z"></path>
+                        </svg>
+                      </button>
+
+                      {/* Bouton d'édition */}
+                      <button
                         className="btn btn-sm btn-outline-warning me-2 task-action-btn"
                         onClick={(e) => {
                           e.stopPropagation();
@@ -124,7 +164,8 @@ const TaskList: React.FC<TaskListProps> = ({
                         </svg>
                       </button>
 
-                      <button 
+                      {/* Bouton de suppression */}
+                      <button
                         className="btn btn-sm btn-outline-danger task-action-btn"
                         onClick={(e) => {
                           e.stopPropagation();
@@ -141,11 +182,10 @@ const TaskList: React.FC<TaskListProps> = ({
                           <path d="M3 6h18v2H3zm3 3h12l-1 12H7L6 9zm5 2v8h2v-8h-2zm-4 0v8h2v-8H7zm8 0v8h2v-8h-2zM9 4V2h6v2h5v2H4V4h5z"></path>
                         </svg>
                       </button>
-
                     </div>
                   </div>
-                  <div 
-                    className="card-body" 
+                  <div
+                    className="card-body"
                     onClick={() => onTaskClick && onTaskClick(task)}
                     style={{ cursor: onTaskClick ? 'pointer' : 'default' }}
                   >
@@ -181,6 +221,8 @@ const TaskList: React.FC<TaskListProps> = ({
                   </div>
                 </div>
               </div>
+              )
+              :null
             ))}
           </>
         )}

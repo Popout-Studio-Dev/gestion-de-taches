@@ -49,7 +49,7 @@ export default function AddTask() {
       dueDate: task.dueDate,
       createdAt: now,
       updatedAt: now,
-      // Ajout conditionnel des dates de début et de fin
+      hidden: false,     
       ...(task.status === TaskStatus.ONGOING && { startedAt: now }),
       ...(task.status === TaskStatus.COMPLETED && { completedAt: now }),
     };
