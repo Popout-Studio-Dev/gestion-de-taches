@@ -17,6 +17,25 @@ export default function Home() {
   
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+
+
+
+  // Filter tasks based on search term
+  const filteredTasks = tasks.filter(task =>
+    task.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Sort tasks by status: ONGOING > WAITING > COMPLETED
+  const sortedTasks = filteredTasks.sort((a, b) => {
+    const statusPriority = {
+      [TaskStatus.ONGOING]: 1,
+      [TaskStatus.WAITING]: 2,
+      [TaskStatus.COMPLETED]: 3,
+    };
+    return statusPriority[a.status] - statusPriority[b.status];
+  });
+
 
   // Fonction pour afficher la modale de confirmation
   const openDeleteModal = (id: string) => {
@@ -112,12 +131,21 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+       {/* Search Bar */}
+       <input 
+        type="text" 
+        placeholder="Rechercher une tâche..." 
+        className="form-control mb-3"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
       
       {/* Task List */}
       <div className="card shadow-sm mb-4">
         <div className="card-body p-0">
           <TaskList 
-            tasks={tasks} 
+            tasks={sortedTasks} 
             onTaskClick={handleTaskClick} 
             showAddButton={true} 
             onDeleteTask={openDeleteModal}
